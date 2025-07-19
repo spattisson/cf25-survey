@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎪 Cedarwood Festival 2025 Experience Survey</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .category-select {
+            margin-bottom: 30px;
+        }
+
+        .category-select label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .category-select select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .category-select select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-group h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .rating-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .rating-group label {
+            font-weight: 500;
+            color: #555;
+            min-width: 200px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffd93d;
+            transform: scale(1.1);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .results-section {
+            display: none;
+            padding: 30px;
+            background: white;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .feedback-section {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .feedback-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Cedarwood Festival 2025 Festival Experience Survey</h1>
+        <p>Help us make next year's festival even better!</p>
+    </div>
+
+    <div class="content" id="surveySection">
+        <div class="category-select">
+            <label for="attendeeCategory">What best describes you as a festival attendee?</label>
+            <select id="attendeeCategory" onchange="updateQuestions()">
+                <option value="">Select your category...</option>
+                <option value="first-time">First-Time Attendee</option>
+                <option value="returning">Returning Attendee</option>
+                <option value="vip">VIP/Guest Ticket Holder</option>
+                <option value="performer">Speaker/Artist</option>
+                <option value="vendor">Vendor/Staff</option>
+                <option value="local">Local Resident</option>
+            </select>
+        </div>
+
+        <div id="questionsContainer" class="hidden">
+            <!-- Questions will be populated here -->
+        </div>
+
+        <div class="text-center hidden" id="submitSection">
+            <button class="btn" onclick="submitSurvey()">Submit Survey</button>
+        </div>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('overview')">Overview</div>
+            <div class="tab" onclick="showTab('categories')">By Category</div>
+            <div class="tab" onclick="showTab('feedback')">Feedback</div>
+        </div>
+
+        <div id="overviewTab">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalResponses">0</div>
+                    <div>Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgSatisfaction">0</div>
+                    <div>Avg Satisfaction</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="recommendationRate">0%</div>
+                    <div>Would Recommend</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Overall Satisfaction Distribution</h3>
+                <canvas id="satisfactionChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div id="categoriesTab" class="hidden">
+            <div class="chart-container">
+                <h3>Satisfaction by Attendee Category</h3>
+                <canvas id="categoryChart" width="400" height="200"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Category Distribution</h3>
+                <canvas id="categoryDistChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div id="feedbackTab" class="hidden">
+            <div class="feedback-section">
+                <h3>Recent Feedback</h3>
+                <div id="feedbackContainer">
+                    <!-- Feedback will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="showSurvey()">Take Another Survey</button>
+            <button class="btn" onclick="showAdminPanel()">Admin Panel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let surveyData = [];
+    let currentTab = 'overview';
+    let adminPassword = 'CarWashBoys!';
+    let isAdminLoggedIn = false;
+
+    const questionSets = {
+        'first-time': {
+            title: 'First-Time Attendee Questions',
+            ratings: [
+                'How easy was it to find information about the festival?',
+                'How clear were the directions and signage?',
+                'How welcoming did the staff make you feel?',
+                'How well did the festival meet your expectations?',
+                'How likely are you to attend next year?'
+            ],
+            feedback: [
+                'What attracted you to attend this festival for the first time?',
+                'What was the highlight of your festival experience?',
+                'What would you change or improve for next year?'
+            ]
+        },
+        'returning': {
+            title: 'Returning Attendee Questions',
+            ratings: [
+                'How does this year compare to previous years?',
+                'How satisfied were you with the lineup/programming?',
+                'How well were any previous concerns addressed?',
+                'How satisfied were you with new additions this year?',
+                'How likely are you to return next year?'
+            ],
+            feedback: [
+                'What keeps bringing you back to this festival?',
+                'What improvements have you noticed over the years?',
+                'What would make you even more excited for next year?'
+            ]
+        },
+        'vip': {
+            title: 'VIP/Guest Ticket Holder Experience Questions',
+            ratings: [
+                'How satisfied were you with the amenities provided for you?',
+                'How comfortable/suitable did the backstage areas feel?',
+                'How responsive was the care from Emma, Grace and other volunteers?',
+                'How likely are you to return to CF again?'
+            ],
+            feedback: [
+                'What Guest perks did you value most?',
+                'What Guest services or amenities were missing?',
+                'How could we enhance the experience for yourself?'
+            ]
+        },
+        'performer': {
+            title: 'Performer/Artist Questions',
+            ratings: [
+                'How satisfied were you with the backstage facilities?',
+                'How well were you supported by festival staff?',
+                'How satisfied were you with sound/technical support?',
+                'How well did the audience respond to your performance?',
+                'How likely are you to perform at this festival again?'
+            ],
+            feedback: [
+                'What made performing at this festival special?',
+                'What challenges did you face as a performer?',
+                'What would improve the artist experience?'
+            ]
+        },
+        'vendor': {
+            title: 'Vendor/Staff Questions',
+            ratings: [
+                'How satisfied were you with your assigned location?',
+                'How well did festival management support vendors?',
+                'How satisfied were you with foot traffic/sales?',
+                'How clear were vendor guidelines and communication?',
+                'How likely are you to participate as a vendor again?'
+            ],
+            feedback: [
+                'What worked well for your vendor experience?',
+                'What operational challenges did you face?',
+                'How could vendor support be improved?'
+            ]
+        },
+        'local': {
+            title: 'Local Resident Questions',
+            ratings: [
+                'How well did the festival respect the local community?',
+                'How satisfied were you with noise management?',
+                'How well were traffic and parking handled?',
+                'How positive was the festival\'s impact on your area?',
+                'How likely are you to support the festival returning?'
+            ],
+            feedback: [
+                'What positive impacts did you notice in your community?',
+                'What concerns do you have about the festival?',
+                'How could the festival better serve local residents?'
+            ]
+        }
+    };
+
+    function updateQuestions() {
+        const category = document.getElementById('attendeeCategory').value;
+        const container = document.getElementById('questionsContainer');
+        const submitSection = document.getElementById('submitSection');
+
+        if (!category) {
+            container.classList.add('hidden');
+            submitSection.classList.add('hidden');
+            return;
+        }
+
+        const questions = questionSets[category];
+        let html = `<div class="question-group">
+                <h3>${questions.title}</h3>`;
+
+        // Rating questions
+        questions.ratings.forEach((question, index) => {
+            html += `
+                    <div class="rating-group">
+                        <label>${question}</label>
+                        <div class="rating-stars" data-rating="${category}-rating-${index}">
+                            ${[1,2,3,4,5].map(star =>
+                `<span class="star" onclick="setRating('${category}-rating-${index}', ${star})">★</span>`
+            ).join('')}
+                        </div>
+                    </div>`;
+        });
+
+        html += '</div>';
+
+        // Feedback questions
+        questions.feedback.forEach((question, index) => {
+            html += `
+                    <div class="question-group">
+                        <h3>${question}</h3>
+                        <textarea id="${category}-feedback-${index}" placeholder="Share your thoughts..."></textarea>
+                    </div>`;
+        });
+
+        container.innerHTML = html;
+        container.classList.remove('hidden');
+        submitSection.classList.remove('hidden');
+    }
+
+    function setRating(ratingId, value) {
+        const stars = document.querySelectorAll(`[data-rating="${ratingId}"] .star`);
+        stars.forEach((star, index) => {
+            star.classList.toggle('active', index < value);
+        });
+        stars[0].parentElement.setAttribute('data-value', value);
+    }
+
+    function submitSurvey() {
+        const category = document.getElementById('attendeeCategory').value;
+        const questions = questionSets[category];
+
+        const response = {
+            id: Date.now(),
+            category: category,
+            timestamp: new Date().toISOString(),
+            ratings: {},
+            feedback: {}
+        };
+
+        // Collect ratings
+        questions.ratings.forEach((question, index) => {
+            const ratingElement = document.querySelector(`[data-rating="${category}-rating-${index}"]`);
+            const value = ratingElement?.getAttribute('data-value') || 0;
+            response.ratings[question] = parseInt(value);
+        });
+
+        // Collect feedback
+        questions.feedback.forEach((question, index) => {
+            const textArea = document.getElementById(`${category}-feedback-${index}`);
+            response.feedback[question] = textArea?.value || '';
+        });
+
+        surveyData.push(response);
+        showResults();
+        updateCharts();
+    }
+
+    function showResults() {
+        document.getElementById('surveySection').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'block';
+        document.getElementById('adminSection').style.display = 'none';
+    }
+
+    function showSurvey() {
+        document.getElementById('surveySection').style.display = 'block';
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+
+        // Reset form
+        document.getElementById('attendeeCategory').value = '';
+        document.getElementById('questionsContainer').classList.add('hidden');
+        document.getElementById('submitSection').classList.add('hidden');
+    }
+
+    function showAdminPanel() {
+        document.getElementById('surveySection').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'block';
+
+        // Reset login form if not logged in
+        if (!isAdminLoggedIn) {
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminControls').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        } else {
+            document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminControls').classList.remove('hidden');
+            updateAdminStats();
+        }
+    }
+
+    function validateAdminPassword() {
+        const enteredPassword = document.getElementById('adminPassword').value;
+
+        if (enteredPassword === adminPassword) {
+            isAdminLoggedIn = true;
+            document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminControls').classList.remove('hidden');
+            updateAdminStats();
+            alert('Admin access granted successfully!');
+        } else {
+            alert('Incorrect password. Access denied.');
+            document.getElementById('adminPassword').value = '';
+        }
+    }
+
+    function adminLogout() {
+        isAdminLoggedIn = false;
+        document.getElementById('adminLoginForm').style.display = 'block';
+        document.getElementById('adminControls').classList.add('hidden');
+        document.getElementById('adminPassword').value = '';
+        alert('Logged out successfully.');
+    }
+
+    function changeAdminPassword() {
+        const currentPassword = prompt('Enter current admin password:');
+        if (currentPassword !== adminPassword) {
+            alert('Current password is incorrect.');
+            return;
+        }
+
+        const newPassword = prompt('Enter new admin password:');
+        if (!newPassword || newPassword.length < 6) {
+            alert('New password must be at least 6 characters long.');
+            return;
+        }
+
+        const confirmPassword = prompt('Confirm new password:');
+        if (newPassword !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+        }
+
+        adminPassword = newPassword;
+        alert('Admin password changed successfully!');
+    }
+
+    function updateAdminStats() {
+        const totalResponses = surveyData.length;
+        const dataSize = Math.round(JSON.stringify(surveyData).length / 1024 * 100) / 100;
+
+        document.getElementById('adminTotalResponses').textContent = totalResponses;
+        document.getElementById('adminDataSize').textContent = dataSize;
+
+        // Category breakdown
+        const categoryStats = {};
+        surveyData.forEach(response => {
+            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
+            categoryStats[category] = (categoryStats[category] || 0) + 1;
+        });
+
+        let statsHtml = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+        Object.entries(categoryStats).forEach(([category, count]) => {
+            const percentage = totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0;
+            statsHtml += `
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <strong>${category}</strong><br>
+                        ${count} responses (${percentage}%)
+                    </div>
+                `;
+        });
+        statsHtml += '</div>';
+
+        if (totalResponses === 0) {
+            statsHtml = '<p style="text-align: center; color: #666;">No survey data available yet.</p>';
+        }
+
+        document.getElementById('adminQuickStats').innerHTML = statsHtml;
+    }
+
+    function exportSummaryReport() {
+        const report = generateSummaryReport();
+        const reportBlob = new Blob([report], {type: 'text/plain'});
+        const url = URL.createObjectURL(reportBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'festival-survey-summary-report.txt';
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function generateSummaryReport() {
+        const totalResponses = surveyData.length;
+        if (totalResponses === 0) {
+            return 'Festival Survey Summary Report\n' +
+                '================================\n\n' +
+                'No survey responses available yet.';
+        }
+
+        let report = 'Festival Survey Summary Report\n';
+        report += '================================\n\n';
+        report += `Generated: ${new Date().toLocaleString()}\n`;
+        report += `Total Responses: ${totalResponses}\n\n`;
+
+        // Category breakdown
+        const categoryStats = {};
+        surveyData.forEach(response => {
+            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
+            categoryStats[category] = (categoryStats[category] || 0) + 1;
+        });
+
+        report += 'RESPONSES BY CATEGORY:\n';
+        report += '----------------------\n';
+        Object.entries(categoryStats).forEach(([category, count]) => {
+            const percentage = Math.round((count / totalResponses) * 100);
+            report += `${category}: ${count} responses (${percentage}%)\n`;
+        });
+
+        // Overall satisfaction
+        let totalSatisfaction = 0;
+        let ratingCount = 0;
+        let wouldRecommend = 0;
+
+        surveyData.forEach(response => {
+            Object.values(response.ratings).forEach(rating => {
+                if (rating > 0) {
+                    totalSatisfaction += rating;
+                    ratingCount++;
+                    if (rating >= 4) wouldRecommend++;
+                }
+            });
+        });
+
+        const avgSatisfaction = ratingCount > 0 ? (totalSatisfaction / ratingCount).toFixed(1) : 0;
+        const recommendationRate = ratingCount > 0 ? Math.round((wouldRecommend / ratingCount) * 100) : 0;
+
+        report += '\nOVERALL SATISFACTION:\n';
+        report += '---------------------\n';
+        report += `Average Rating: ${avgSatisfaction}/5.0\n`;
+        report += `Recommendation Rate: ${recommendationRate}%\n`;
+        report += `Total Ratings: ${ratingCount}\n\n`;
+
+        // Recent feedback highlights
+        report += 'RECENT FEEDBACK HIGHLIGHTS:\n';
+        report += '---------------------------\n';
+        const recentFeedback = surveyData.slice(-5);
+        recentFeedback.forEach((response, index) => {
+            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
+            report += `\n${category} Attendee:\n`;
+            Object.entries(response.feedback).forEach(([question, answer]) => {
+                if (answer.trim()) {
+                    report += `  • ${question}\n    "${answer}"\n`;
+                }
+            });
+        });
+
+        return report;
+    }
+
+    function showTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Show/hide tab content
+        ['overview', 'categories', 'feedback'].forEach(tab => {
+            document.getElementById(tab + 'Tab').classList.toggle('hidden', tab !== tabName);
+        });
+
+        currentTab = tabName;
+    }
+
+    function updateCharts() {
+        updateOverviewStats();
+        updateSatisfactionChart();
+        updateCategoryCharts();
+        updateFeedbackDisplay();
+    }
+
+    function updateOverviewStats() {
+        const totalResponses = surveyData.length;
+
+        let totalSatisfaction = 0;
+        let ratingCount = 0;
+        let wouldRecommend = 0;
+
+        surveyData.forEach(response => {
+            Object.values(response.ratings).forEach(rating => {
+                if (rating > 0) {
+                    totalSatisfaction += rating;
+                    ratingCount++;
+                    if (rating >= 4) wouldRecommend++;
+                }
+            });
+        });
+
+        const avgSatisfaction = ratingCount > 0 ? (totalSatisfaction / ratingCount).toFixed(1) : 0;
+        const recommendationRate = ratingCount > 0 ? Math.round((wouldRecommend / ratingCount) * 100) : 0;
+
+        document.getElementById('totalResponses').textContent = totalResponses;
+        document.getElementById('avgSatisfaction').textContent = avgSatisfaction + '/5';
+        document.getElementById('recommendationRate').textContent = recommendationRate + '%';
+    }
+
+    function updateSatisfactionChart() {
+        const ctx = document.getElementById('satisfactionChart').getContext('2d');
+
+        // Clear existing chart
+        if (window.satisfactionChartInstance) {
+            window.satisfactionChartInstance.destroy();
+        }
+
+        const ratingCounts = [0, 0, 0, 0, 0];
+        surveyData.forEach(response => {
+            Object.values(response.ratings).forEach(rating => {
+                if (rating > 0) ratingCounts[rating - 1]++;
+            });
+        });
+
+        window.satisfactionChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+                datasets: [{
+                    label: 'Number of Ratings',
+                    data: ratingCounts,
+                    backgroundColor: [
+                        '#ff6b6b',
+                        '#ffa726',
+                        '#ffcc02',
+                        '#66bb6a',
+                        '#4caf50'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCategoryCharts() {
+        // Category satisfaction chart
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+
+        // Clear existing chart
+        if (window.categoryChartInstance) {
+            window.categoryChartInstance.destroy();
+        }
+
+        const categoryData = {};
+
+        surveyData.forEach(response => {
+            if (!categoryData[response.category]) {
+                categoryData[response.category] = { total: 0, count: 0 };
+            }
+
+            Object.values(response.ratings).forEach(rating => {
+                if (rating > 0) {
+                    categoryData[response.category].total += rating;
+                    categoryData[response.category].count++;
+                }
+            });
+        });
+
+        const categories = Object.keys(categoryData);
+        const avgRatings = categories.map(cat =>
+            categoryData[cat].count > 0 ? (categoryData[cat].total / categoryData[cat].count).toFixed(1) : 0
+        );
+
+        window.categoryChartInstance = new Chart(categoryCtx, {
+            type: 'radar',
+            data: {
+                labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' ')),
+                datasets: [{
+                    label: 'Average Satisfaction',
+                    data: avgRatings,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 5
+                    }
+                }
+            }
+        });
+
+        // Category distribution chart
+        const distCtx = document.getElementById('categoryDistChart').getContext('2d');
+
+        // Clear existing chart
+        if (window.categoryDistChartInstance) {
+            window.categoryDistChartInstance.destroy();
+        }
+
+        const categoryCounts = {};
+
+        surveyData.forEach(response => {
+            categoryCounts[response.category] = (categoryCounts[response.category] || 0) + 1;
+        });
+
+        window.categoryDistChartInstance = new Chart(distCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categoryCounts).map(cat =>
+                    cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' ')
+                ),
+                datasets: [{
+                    data: Object.values(categoryCounts),
+                    backgroundColor: [
+                        '#ff6b6b',
+                        '#4ecdc4',
+                        '#45b7d1',
+                        '#96ceb4',
+                        '#feca57',
+                        '#ff9ff3'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    }
+
+    function updateFeedbackDisplay() {
+        const container = document.getElementById('feedbackContainer');
+        let html = '';
+
+        surveyData.slice(-10).reverse().forEach(response => {
+            const categoryName = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
+
+            Object.entries(response.feedback).forEach(([question, answer]) => {
+                if (answer.trim()) {
+                    html += `
+                            <div class="feedback-item">
+                                <strong>${categoryName}:</strong> ${question}
+                                <p style="margin-top: 8px; font-style: italic;">"${answer}"</p>
+                            </div>
+                        `;
+                }
+            });
+        });
+
+        container.innerHTML = html || '<p>No feedback responses yet.</p>';
+    }
+
+    function resetData() {
+        if (!isAdminLoggedIn) {
+            alert('Admin access required for this function.');
+            return;
+        }
+
+        if (confirm('Are you sure you want to reset all survey data? This action cannot be undone.')) {
+            surveyData = [];
+            updateCharts();
+            updateAdminStats();
+            alert('All survey data has been reset successfully.');
+        }
+    }
+
+    function exportData() {
+        if (!isAdminLoggedIn) {
+            alert('Admin access required for this function.');
+            return;
+        }
+
+        const dataStr = JSON.stringify(surveyData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'festival-survey-data.json';
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearCharts() {
+        // Destroy existing charts if they exist
+        Chart.helpers.each(Chart.instances, function(instance) {
+            instance.destroy();
+        });
+    }
+
+    // Initialize with sample data
+    function initializeSampleData() {
+        const sampleResponses = [
+            {
+                id: 1,
+                category: 'first-time',
+                timestamp: new Date().toISOString(),
+                ratings: {
+                    'How easy was it to find information about the festival?': 4,
+                    'How clear were the directions and signage?': 5,
+                    'How welcoming did the staff make you feel?': 5,
+                    'How well did the festival meet your expectations?': 4,
+                    'How likely are you to attend next year?': 5
+                },
+                feedback: {
+                    'What attracted you to attend this festival for the first time?': 'Great lineup and reasonable prices',
+                    'What was the highlight of your festival experience?': 'Amazing main stage performances',
+                    'What would you change or improve for next year?': 'More food options and shorter queues'
+                }
+            },
+            {
+                id: 2,
+                category: 'returning',
+                timestamp: new Date().toISOString(),
+                ratings: {
+                    'How does this year compare to previous years?': 4,
+                    'How satisfied were you with the lineup/programming?': 5,
+                    'How well were any previous concerns addressed?': 4,
+                    'How satisfied were you with new additions this year?': 4,
+                    'How likely are you to return next year?': 5
+                },
+                feedback: {
+                    'What keeps bringing you back to this festival?': 'Great atmosphere and community feeling',
+                    'What improvements have you noticed over the years?': 'Better organization and facilities',
+                    'What would make you even more excited for next year?': 'More diverse music genres'
+                }
+            },
+            {
+                id: 3,
+                category: 'vip',
+                timestamp: new Date().toISOString(),
+                ratings: {
+                    'How satisfied were you with VIP amenities?': 5,
+                    'How was the value for money of your VIP experience?': 4,
+                    'How exclusive did the VIP areas feel?': 5,
+                    'How responsive was VIP customer service?': 5,
+                    'How likely are you to purchase VIP again?': 5
+                },
+                feedback: {
+                    'What VIP perks did you value most?': 'Dedicated viewing areas and complimentary drinks',
+                    'What VIP services or amenities were missing?': 'Could use more seating in VIP areas',
+                    'How could we enhance the VIP experience?': 'Artist meet and greets would be amazing'
+                }
+            }
+        ];
+
+        surveyData = sampleResponses;
+    }
+
+    // Initialize sample data when page loads
+    window.onload = function() {
+        initializeSampleData();
+    };
+</script>
+</body>
+</html>
