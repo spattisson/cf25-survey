@@ -50,6 +50,17 @@
             padding: 30px;
             text-align: center;
             line-height: 2.5;
+            font-family: 'din-condensed', sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            letter-spacing: 1px;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .menu-links{
+            padding-right: 30px;
         }
 
         ul li {
@@ -152,7 +163,7 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #2AA27C;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -171,6 +182,12 @@
         }
 
         .results-section {
+            display: none;
+            padding: 30px;
+            background: white;
+        }
+
+        .admin-login-form {
             display: none;
             padding: 30px;
             background: white;
@@ -250,7 +267,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Cedarwood Festival 2025 Experience Survey</h1>
+        <h1>CF25 Feedback Survey</h1>
         <p>Help us make next year's festival even better!</p>
     </div>
 
@@ -331,11 +348,21 @@
 
         <div style="text-align: center; margin-top: 30px;">
             <button class="btn" onclick="showSurvey()">Take Another Survey</button>
-            <button class="btn" onclick="showAdminPanel()">Admin Panel</button>
+<!--        <button class="btn" onclick="showAdminPanel()">Admin Panel</button>-->
+            <button class="btn" onclick="requestAdminPassword()">Show admin functions</button>
         </div>
     </div>
     <div class="results-section" id="adminSection">
-        <p>ah boo</p>
+        <p>Admin only functions</p>
+        <button class="btn" onclick="showResults()">Show results</button>
+        <button class="btn" onclick="exportData()">Export all data</button>
+        <button class="btn" onclick="resetData()">Reset all data</button>
+    </div>
+    <div class="admin-login-form" id="adminLoginForm">
+        <h2>Admin login</h2>
+        <label for="adminPassword">Enter password</label>
+        <input type="password" id="adminPassword" placeholder="Password" />
+        <button class="btn" onclick="validateAdminPassword()">Login</button>
     </div>
 </div>
 
@@ -358,7 +385,8 @@
             feedback: [
                 'What attracted you to attend this festival for the first time?',
                 'What was the highlight of your festival experience?',
-                'What would you change or improve for next year?'
+                'What would you change or improve for next year?',
+                'Which church fellowship are you associated with? (optional)'
             ]
         },
         'returning': {
@@ -373,7 +401,8 @@
             feedback: [
                 'What keeps bringing you back to this festival?',
                 'What improvements have you noticed over the years?',
-                'What would make you even more excited for next year?'
+                'What would make you even more excited for next year?',
+                'Which church fellowship are you associated with? (optional)'
             ]
         },
         'guest': {
@@ -381,7 +410,7 @@
             ratings: [
                 'How satisfied were you with the amenities provided for you?',
                 'How comfortable/suitable did the backstage areas feel?',
-                'How responsive was the care from Emma, Grace and other volunteers?',
+                'How responsive was the care from the team and other volunteers?',
                 'How likely are you to return to CF again?'
             ],
             feedback: [
@@ -463,7 +492,8 @@
             feedback: [
                 'What positive impacts did you notice in your community?',
                 'What concerns do you have about the festival?',
-                'How could the festival better serve local residents?'
+                'How could the festival better serve local residents?',
+                'Which church fellowship are you associated with? (optional)'
             ]
         }
     };
@@ -554,12 +584,15 @@
         document.getElementById('surveySection').style.display = 'none';
         document.getElementById('resultsSection').style.display = 'block';
         document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('adminLoginForm').style.display = 'none';
     }
 
     function showSurvey() {
         document.getElementById('surveySection').style.display = 'block';
         document.getElementById('resultsSection').style.display = 'none';
         document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('adminLoginForm').style.display = 'none';
+
 
         // Reset form
         document.getElementById('attendeeCategory').value = '';
@@ -575,24 +608,29 @@
         // Reset login form if not logged in
         if (!isAdminLoggedIn) {
             document.getElementById('adminLoginForm').style.display = 'block';
-            document.getElementById('adminControls').classList.add('hidden');
+            document.getElementById('adminSection').classList.add('hidden');
             document.getElementById('adminPassword').value = '';
         } else {
             document.getElementById('adminLoginForm').style.display = 'none';
-            document.getElementById('adminControls').classList.remove('hidden');
-            updateAdminStats();
+            document.getElementById('adminSection').classList.remove('hidden');
+            //updateAdminStats();
         }
+    }
+
+    function requestAdminPassword() {
+        document.getElementById('adminLoginForm').style.display = 'block';
     }
 
     function validateAdminPassword() {
         const enteredPassword = document.getElementById('adminPassword').value;
+        //document.getElementById('adminLoginForm').style.display = 'none';
 
         if (enteredPassword === adminPassword) {
             isAdminLoggedIn = true;
-            document.getElementById('adminLoginForm').style.display = 'none';
-            document.getElementById('adminControls').classList.remove('hidden');
+            document.getElementById('adminSection').classList.remove('hidden');
             updateAdminStats();
             alert('Admin access granted successfully!');
+            showAdminPanel()
         } else {
             alert('Incorrect password. Access denied.');
             document.getElementById('adminPassword').value = '';
@@ -601,8 +639,8 @@
 
     function adminLogout() {
         isAdminLoggedIn = false;
-        document.getElementById('adminLoginForm').style.display = 'block';
-        document.getElementById('adminControls').classList.add('hidden');
+        document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('adminSection').classList.add('hidden');
         document.getElementById('adminPassword').value = '';
         alert('Logged out successfully.');
     }
@@ -634,8 +672,8 @@
         const totalResponses = surveyData.length;
         const dataSize = Math.round(JSON.stringify(surveyData).length / 1024 * 100) / 100;
 
-        document.getElementById('adminTotalResponses').textContent = totalResponses;
-        document.getElementById('adminDataSize').textContent = dataSize;
+        // document.getElementById('adminTotalResponses').textContent = totalResponses;
+        // document.getElementById('adminDataSize').textContent = dataSize;
 
         // Category breakdown
         const categoryStats = {};
@@ -1026,7 +1064,7 @@
                 ratings: {
                     'How satisfied were you with the amenities provided for you?': 5,
                     'How comfortable/suitable did the backstage areas feel?': 5,
-                    'How responsive was the care from Emma, Grace and other volunteers?': 5,
+                    'How responsive was the care from the team and other volunteers?': 5,
                     'How likely are you to return to CF again?': 3
                 },
                 feedback: {
@@ -1059,13 +1097,22 @@
         <p class="copyright">© Cedarwood Festival. All Rights Reserved. Registered Charity No. 518744.</p>
 
         <p class="social-networks">
-            <a href="https://twitter.com/CedarwoodFest" target="_blank" class="twitter" title="Twitter" aria-label="Twitter" rel="noopener"><i class="fab fa-x-twitter"></i><span class="name">Twitter</span></a>
-            <a href="https://www.facebook.com/Cedarwood-Festival-2006166366328320/" target="_blank" class="facebook" title="Facebook" aria-label="Facebook" rel="noopener"><i class="fab fa-facebook"></i><span class="name">Facebook</span></a>
-            <a href="https://www.instagram.com/cedarwoodfestival/" target="_blank" class="instagram" title="Instagram" aria-label="Instagram" rel="noopener"><i class="fab fa-instagram"></i><span class="name">Instagram</span></a>
-            <a href="https://www.youtube.com/channel/UCY70X1RYM79fCX_-GDwIUyg" target="_blank" class="youtube" title="YouTube" aria-label="YouTube" rel="noopener"><i class="fab fa-youtube"></i><span class="name">YouTube</span></a>
-            <a href="https://www.tiktok.com/@cedarwoodfestival?lang=en" target="_blank" class="tiktok" title="TikTok" aria-label="TikTok" rel="noopener"><i class="fab fa-tiktok"></i><span class="name">TikTok</span></a>
+            <div class="social-link">
+                <a href="https://twitter.com/CedarwoodFest" target="_blank" class="twitter" title="Twitter" aria-label="Twitter" rel="noopener"><i class="fab fa-x-twitter"></i><span class="name">Twitter</span></a>
+            </div>
+            <div class="social-link">
+                <a href="https://www.facebook.com/Cedarwood-Festival-2006166366328320/" target="_blank" class="facebook" title="Facebook" aria-label="Facebook" rel="noopener"><i class="fab fa-facebook"></i><span class="name">Facebook</span></a>
+            </div>
+            <div class="social-link">
+                <a href="https://www.instagram.com/cedarwoodfestival/" target="_blank" class="instagram" title="Instagram" aria-label="Instagram" rel="noopener"><i class="fab fa-instagram"></i><span class="name">Instagram</span></a>
+            </div>
+            <div class="social-link">
+                <a href="https://www.youtube.com/channel/UCY70X1RYM79fCX_-GDwIUyg" target="_blank" class="youtube" title="YouTube" aria-label="YouTube" rel="noopener"><i class="fab fa-youtube"></i><span class="name">YouTube</span></a>
+            </div>
+            <div class="social-link">
+                <a href="https://www.tiktok.com/@cedarwoodfestival?lang=en" target="_blank" class="tiktok" title="TikTok" aria-label="TikTok" rel="noopener"><i class="fab fa-tiktok"></i><span class="name">TikTok</span></a>
+            </div>
     </div>
-
 </footer>
 </body>
 </html>
