@@ -168,6 +168,23 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
         .btn {
             background: #2AA27C;
             color: white;
@@ -282,6 +299,7 @@
         <p>Help us make next year's festival even better!</p>
     </div>
 
+    <!-- Main Survey Section -->
     <div class="content" id="surveySection">
         <div class="category-select">
             <label for="attendeeCategory">What best describes you as a festival attendee?</label>
@@ -509,6 +527,62 @@
         }
     };
 
+    // Utility functions
+    function showMessage(elementId, message, type = 'info') {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        const className = type === 'error' ? 'error-message' : 'success-message';
+        element.innerHTML = `<div class="${className}">${message}</div>`;
+        setTimeout(() => element.innerHTML = '', 5000);
+    }
+
+    function setLoading(buttonId, loading = true) {
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+
+        if (loading) {
+            button.disabled = true;
+            button.innerHTML = '<span class="loading"></span>' + button.textContent;
+        } else {
+            button.disabled = false;
+            button.innerHTML = button.textContent.replace(/^.*<\/span>/, '');
+        }
+    }
+
+    // API functions
+    async function apiCall(action, data = {}) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('API call failed:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async function loadSurveyData() {
+        const result = await apiCall('surveys');
+        if (result.success) {
+            surveyData = result.data;
+            updateCharts();
+        } else {
+            console.error('Failed to load survey data:', result.error);
+        }
+    }
+
+    // Survey functions
     function updateQuestions() {
         const category = document.getElementById('attendeeCategory').value;
         const container = document.getElementById('questionsContainer');
