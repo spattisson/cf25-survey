@@ -1,4 +1,7 @@
+--------------------------------
 -- CF25 Survey Database Setup
+-- v1.1
+--------------------------------
 -- Create database (run this first)
 CREATE DATABASE IF NOT EXISTS cf25_survey CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE cf25_survey;
@@ -38,6 +41,7 @@ CREATE TABLE survey_feedback (
 );
 
 -- Table for admin settings (optional - for storing admin password hash)
+-- NOT USED
 CREATE TABLE admin_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     setting_key VARCHAR(100) NOT NULL UNIQUE,
@@ -46,17 +50,20 @@ CREATE TABLE admin_settings (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- NOT USED
 -- Insert default admin password hash (you should change this)
 -- This is a hash of 'CarWashBoys!' - you should update it
 INSERT INTO admin_settings (setting_key, setting_value) VALUES 
 ('admin_password_hash', '$2y$10$example.hash.here');
 
+-- NOT USED
 -- Create a user for the application (recommended for security)
 -- Replace 'your_password' with a strong password
 CREATE USER IF NOT EXISTS 'cf25_user'@'localhost' IDENTIFIED BY 'your_password';
 GRANT SELECT, INSERT, UPDATE, DELETE ON cf25_survey.* TO 'cf25_user'@'localhost';
 FLUSH PRIVILEGES;
 
+-- NOT USED
 -- Sample view for easy data retrieval
 CREATE VIEW survey_summary AS
 SELECT 
