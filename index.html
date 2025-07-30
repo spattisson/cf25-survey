@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎪 Cedarwood Festival 2025 Survey</title>
+    <title>🎪 CF25 Feedback Survey</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -204,13 +205,7 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .results-section {
-            display: none;
-            padding: 30px;
-            background: white;
-        }
-
-        .admin-login-form {
+        .results-section, .admin-section, .admin-login-form {
             display: none;
             padding: 30px;
             background: white;
@@ -285,6 +280,44 @@
             background: #667eea;
             color: white;
         }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #fcc;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #363;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #cfc;
+        }
     </style>
 </head>
 <body>
@@ -292,7 +325,6 @@
         <p><img width="150" height="43" src="https://cedarwoodfestival.com/wp-content/uploads/2019/01/logo.png" alt="Cedarwood Festival logo"></p>
 </div>
 <div class="container">
-
     <div class="header">
 
         <h1>CF25 Feedback Survey</h1>
@@ -308,7 +340,7 @@
                 <option value="first-time">First-Time Attendee</option>
                 <option value="returning">Returning Attendee</option>
                 <option value="guest">Guest (Free Ticket Holder)</option>
-                <option value="performer">Speaker/Artist</option>
+                <option value="speaker">Speaker/Artist</option>
                 <option value="exhibitor">Marketplace Exhibitor</option>
                 <option value="vendor">Food Vendor/Partner/Supplier</option>
                 <option value="volunteer">Volunteer/TRIBE member</option>
@@ -323,8 +355,11 @@
         <div class="text-center hidden" id="submitSection">
             <button class="btn" onclick="submitSurvey()">Submit Survey</button>
         </div>
+
+        <div id="surveyMessage"></div>
     </div>
 
+    <!-- Results Section -->
     <div class="results-section" id="resultsSection">
         <div class="tabs">
             <div class="tab active" onclick="showTab('overview')">Overview</div>
@@ -381,6 +416,8 @@
             <button class="btn" onclick="requestAdminPassword()">Show admin functions</button>
         </div>
     </div>
+
+    <!-- Admin Section -->
     <div class="results-section" id="adminSection">
         <p>Admin only functions</p>
         <button class="btn" onclick="showResults()">Show results</button>
@@ -396,10 +433,13 @@
 </div>
 
 <script>
+    // Configuration - Update this with your server details
+    const API_BASE_URL = '/api.php'; // Update this to your API endpoint
+
     let surveyData = [];
     let currentTab = 'overview';
-    let adminPassword = 'CarWashBoys!';
     let isAdminLoggedIn = false;
+    let chartInstances = {};
 
     const questionSets = {
         'first-time': {
@@ -435,7 +475,7 @@
             ]
         },
         'guest': {
-            title: 'Guest (Free Ticket Holder) Experience Questions',
+            title: 'Guest (Free Ticket Holder) Questions',
             ratings: [
                 'How satisfied were you with the amenities provided for you?',
                 'How comfortable/suitable did the backstage areas feel?',
@@ -448,8 +488,8 @@
                 'How could we enhance the experience for yourself?'
             ]
         },
-        'performer': {
-            title: 'Performer/Artist Questions',
+        'speaker': {
+            title: 'Speaker/Artist Questions',
             ratings: [
                 'How satisfied were you with the backstage facilities?',
                 'How well were you supported by festival staff?',
@@ -467,7 +507,7 @@
             title: 'Marketplace Exhibitor Questions',
             ratings: [
                 'How satisfied were you with your assigned location?',
-                'How well did Lydia & festival management support exhibitors?',
+                'How well did festival management support exhibitors?',
                 'How satisfied were you with foot traffic/sales?',
                 'How clear were exhibitor guidelines and communication?',
                 'How likely are you to participate as a exhibitors again?'
@@ -483,7 +523,7 @@
             ratings: [
                 'How satisfied were you with your assigned location?',
                 'How well did festival management support vendors?',
-                'How satisfied were you with foot traffic/sales?',
+                'How satisfied were you with footfall/sales?',
                 'How clear were vendor guidelines and communication?',
                 'How likely are you to participate as a vendor again?'
             ],
@@ -494,7 +534,7 @@
             ]
         },
         'volunteer': {
-            title: 'Volunteer Questions',
+            title: 'Volunteer/TRIBE Member Questions',
             ratings: [
                 'How well was your application responded to?',
                 'How satisfied were you with your assigned role?',
@@ -635,7 +675,7 @@
         stars[0].parentElement.setAttribute('data-value', value);
     }
 
-    function submitSurvey() {
+    async function submitSurvey() {
         const category = document.getElementById('attendeeCategory').value;
         const questions = questionSets[category];
 
@@ -660,11 +700,23 @@
             response.feedback[question] = textArea?.value || '';
         });
 
-        surveyData.push(response);
-        showResults();
-        updateCharts();
+        // Submit to server
+        setLoading('submitBtn');
+        const result = await apiCall('submit', response);
+        setLoading('submitBtn', false);
+
+        if (result.success) {
+            showMessage('surveyMessage', 'Thank you! Your survey has been submitted successfully.', 'success');
+            setTimeout(() => {
+                showResults();
+                loadSurveyData();
+            }, 2000);
+        } else {
+            showMessage('surveyMessage', 'Failed to submit survey: ' + result.error, 'error');
+        }
     }
 
+    // Navigation functions
     function showResults() {
         document.getElementById('surveySection').style.display = 'none';
         document.getElementById('resultsSection').style.display = 'block';
@@ -683,6 +735,7 @@
         document.getElementById('attendeeCategory').value = '';
         document.getElementById('questionsContainer').classList.add('hidden');
         document.getElementById('submitSection').classList.add('hidden');
+        document.getElementById('surveyMessage').innerHTML = '';
     }
 
     function showAdminPanel() {
@@ -693,49 +746,60 @@
         // Reset login form if not logged in
         if (!isAdminLoggedIn) {
             document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminControls').classList.add('hidden');
             document.getElementById('adminSection').classList.add('hidden');
             document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLoginMessage').innerHTML = '';
         } else {
             document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminControls').classList.remove('hidden');
             document.getElementById('adminSection').classList.remove('hidden');
             //updateAdminStats();
         }
     }
 
+    // Admin functions
     function requestAdminPassword() {
         document.getElementById('adminLoginForm').style.display = 'block';
     }
 
-    function validateAdminPassword() {
-        const enteredPassword = document.getElementById('adminPassword').value;
-        //document.getElementById('adminLoginForm').style.display = 'none';
+    async function validateAdminPassword() {
+        const password = document.getElementById('adminPassword').value;
 
-        if (enteredPassword === adminPassword) {
+        setLoading('adminLoginBtn');
+        const result = await apiCall('validate_admin', { password });
+        setLoading('adminLoginBtn', false);
+
+        if (result.success) {
             isAdminLoggedIn = true;
             document.getElementById('adminSection').classList.remove('hidden');
+            document.getElementById('adminLoginForm').style.display = 'none';
+            document.getElementById('adminControls').classList.remove('hidden');
+            showMessage('adminLoginMessage', 'Admin access granted successfully!', 'success');
             updateAdminStats();
             alert('Admin access granted successfully!');
             showAdminPanel()
         } else {
-            alert('Incorrect password. Access denied.');
+            showMessage('adminLoginMessage', 'Incorrect password. Access denied.', 'error');
             document.getElementById('adminPassword').value = '';
         }
     }
 
     function adminLogout() {
         isAdminLoggedIn = false;
-        document.getElementById('adminLoginForm').style.display = 'none';
+        //document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('adminLoginForm').style.display = 'block';
+        document.getElementById('adminControls').classList.add('hidden');
         document.getElementById('adminSection').classList.add('hidden');
         document.getElementById('adminPassword').value = '';
+        document.getElementById('adminLoginMessage').innerHTML = '';
+        document.getElementById('adminMessage').innerHTML = '';
         alert('Logged out successfully.');
     }
 
-    function changeAdminPassword() {
+    async function changeAdminPassword() {
         const currentPassword = prompt('Enter current admin password:');
-        if (currentPassword !== adminPassword) {
-            alert('Current password is incorrect.');
-            return;
-        }
+        if (!currentPassword) return;
 
         const newPassword = prompt('Enter new admin password:');
         if (!newPassword || newPassword.length < 6) {
@@ -749,114 +813,161 @@
             return;
         }
 
-        adminPassword = newPassword;
-        alert('Admin password changed successfully!');
-    }
-
-    function updateAdminStats() {
-        const totalResponses = surveyData.length;
-        const dataSize = Math.round(JSON.stringify(surveyData).length / 1024 * 100) / 100;
-
-        // document.getElementById('adminTotalResponses').textContent = totalResponses;
-        // document.getElementById('adminDataSize').textContent = dataSize;
-
-        // Category breakdown
-        const categoryStats = {};
-        surveyData.forEach(response => {
-            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
-            categoryStats[category] = (categoryStats[category] || 0) + 1;
+        const result = await apiCall('change_password', {
+            current_password: currentPassword,
+            new_password: newPassword
         });
 
+        if (result.success) {
+            showMessage('adminMessage', 'Admin password changed successfully!', 'success');
+        } else {
+            showMessage('adminMessage', 'Failed to change password: ' + result.error, 'error');
+        }
+    }
+
+    async function updateAdminStats() {
+        const result = await apiCall('stats');
+        if (!result.success) {
+            showMessage('adminMessage', 'Failed to load statistics: ' + result.error, 'error');
+            return;
+        }
+
+        const stats = result.stats;
+
+        // Update stat cards
+        const totalEl = document.getElementById('adminTotalResponses');
+        const sizeEl = document.getElementById('adminDataSize');
+        if (totalEl) totalEl.textContent = stats.totalResponses;
+        if (sizeEl) sizeEl.textContent = stats.dataSizeKB;
+
+        // Update quick stats
+        const quickStatsEl = document.getElementById('adminQuickStats');
+        if (!quickStatsEl) return;
+
+        if (stats.totalResponses === 0) {
+            quickStatsEl.innerHTML = '<p style="text-align: center; color: #666;">No survey data available yet.</p>';
+            return;
+        }
+
         let statsHtml = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
-        Object.entries(categoryStats).forEach(([category, count]) => {
-            const percentage = totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0;
+        stats.categoryBreakdown.forEach(cat => {
+            const percentage = Math.round((cat.count / stats.totalResponses) * 100);
+            const categoryName = cat.category.charAt(0).toUpperCase() + cat.category.slice(1).replace('-', ' ');
             statsHtml += `
                     <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
-                        <strong>${category}</strong><br>
-                        ${count} responses (${percentage}%)
+                        <strong>${categoryName}</strong><br>
+                        ${cat.count} responses (${percentage}%)
                     </div>
                 `;
         });
         statsHtml += '</div>';
 
-        if (totalResponses === 0) {
-            statsHtml = '<p style="text-align: center; color: #666;">No survey data available yet.</p>';
-        }
-
-        document.getElementById('adminQuickStats').innerHTML = statsHtml;
+        quickStatsEl.innerHTML = statsHtml;
     }
 
-    function exportSummaryReport() {
-        const report = generateSummaryReport();
+    async function resetData() {
+        if (!confirm('Are you sure you want to reset all survey data? This action cannot be undone.')) {
+            return;
+        }
+
+        const password = prompt('Enter admin password to confirm:');
+        if (!password) return;
+
+        setLoading('resetBtn');
+        const result = await apiCall('reset_data', { password });
+        setLoading('resetBtn', false);
+
+        if (result.success) {
+            showMessage('adminMessage', 'All survey data has been reset successfully.', 'success');
+            surveyData = [];
+            updateCharts();
+            updateAdminStats();
+        } else {
+            showMessage('adminMessage', 'Failed to reset data: ' + result.error, 'error');
+        }
+    }
+
+    async function exportData() {
+        setLoading('exportBtn');
+        const result = await apiCall('surveys');
+        setLoading('exportBtn', false);
+
+        if (result.success) {
+            const dataStr = JSON.stringify(result.data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'cf25-survey-data.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            showMessage('adminMessage', 'Survey data exported successfully.', 'success');
+        } else {
+            showMessage('adminMessage', 'Failed to export data: ' + result.error, 'error');
+        }
+    }
+
+    async function exportSummaryReport() {
+        setLoading('exportSummaryBtn');
+
+        // Get fresh stats for report
+        const statsResult = await apiCall('stats');
+        const surveyResult = await apiCall('surveys');
+
+        setLoading('exportSummaryBtn', false);
+
+        if (!statsResult.success || !surveyResult.success) {
+            showMessage('adminMessage', 'Failed to generate report.', 'error');
+            return;
+        }
+
+        const report = generateSummaryReport(statsResult.stats, surveyResult.data);
         const reportBlob = new Blob([report], {type: 'text/plain'});
         const url = URL.createObjectURL(reportBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'festival-survey-summary-report.txt';
+        link.download = 'cf25-survey-summary-report.txt';
         link.click();
         URL.revokeObjectURL(url);
+        showMessage('adminMessage', 'Summary report exported successfully.', 'success');
     }
 
-    function generateSummaryReport() {
-        const totalResponses = surveyData.length;
-        if (totalResponses === 0) {
-            return 'Festival Survey Summary Report\n' +
-                '================================\n\n' +
-                'No survey responses available yet.';
+    function generateSummaryReport(stats, data) {
+        let report = 'CF25 Festival Survey Summary Report\n';
+        report += '====================================\n\n';
+        report += `Generated: ${new Date().toLocaleString()}\n`;
+        report += `Total Responses: ${stats.totalResponses}\n\n`;
+
+        if (stats.totalResponses === 0) {
+            report += 'No survey responses available yet.\n';
+            return report;
         }
 
-        let report = 'Festival Survey Summary Report\n';
-        report += '================================\n\n';
-        report += `Generated: ${new Date().toLocaleString()}\n`;
-        report += `Total Responses: ${totalResponses}\n\n`;
-
         // Category breakdown
-        const categoryStats = {};
-        surveyData.forEach(response => {
-            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
-            categoryStats[category] = (categoryStats[category] || 0) + 1;
-        });
-
         report += 'RESPONSES BY CATEGORY:\n';
         report += '----------------------\n';
-        Object.entries(categoryStats).forEach(([category, count]) => {
-            const percentage = Math.round((count / totalResponses) * 100);
-            report += `${category}: ${count} responses (${percentage}%)\n`;
+        stats.categoryBreakdown.forEach(cat => {
+            const percentage = Math.round((cat.count / stats.totalResponses) * 100);
+            const categoryName = cat.category.charAt(0).toUpperCase() + cat.category.slice(1).replace('-', ' ');
+            report += `${categoryName}: ${cat.count} responses (${percentage}%)\n`;
         });
 
         // Overall satisfaction
-        let totalSatisfaction = 0;
-        let ratingCount = 0;
-        let wouldRecommend = 0;
-
-        surveyData.forEach(response => {
-            Object.values(response.ratings).forEach(rating => {
-                if (rating > 0) {
-                    totalSatisfaction += rating;
-                    ratingCount++;
-                    if (rating >= 4) wouldRecommend++;
-                }
-            });
-        });
-
-        const avgSatisfaction = ratingCount > 0 ? (totalSatisfaction / ratingCount).toFixed(1) : 0;
-        const recommendationRate = ratingCount > 0 ? Math.round((wouldRecommend / ratingCount) * 100) : 0;
-
         report += '\nOVERALL SATISFACTION:\n';
         report += '---------------------\n';
-        report += `Average Rating: ${avgSatisfaction}/5.0\n`;
-        report += `Recommendation Rate: ${recommendationRate}%\n`;
-        report += `Total Ratings: ${ratingCount}\n\n`;
+        report += `Average Rating: ${stats.avgSatisfaction}/5.0\n`;
+        report += `Recommendation Rate: ${stats.recommendationRate}%\n`;
+        report += `Total Ratings: ${stats.totalRatings}\n\n`;
 
         // Recent feedback highlights
         report += 'RECENT FEEDBACK HIGHLIGHTS:\n';
         report += '---------------------------\n';
-        const recentFeedback = surveyData.slice(-5);
-        recentFeedback.forEach((response, index) => {
-            const category = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
-            report += `\n${category} Attendee:\n`;
+        const recentFeedback = data.slice(-5);
+        recentFeedback.forEach(response => {
+            const categoryName = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
+            report += `\n${categoryName} Attendee:\n`;
             Object.entries(response.feedback).forEach(([question, answer]) => {
-                if (answer.trim()) {
+                if (answer && answer.trim()) {
                     report += `  • ${question}\n    "${answer}"\n`;
                 }
             });
@@ -865,6 +976,9 @@
         return report;
     }
 
+
+
+    // Chart functions
     function showTab(tabName) {
         // Update tab buttons
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -872,7 +986,10 @@
 
         // Show/hide tab content
         ['overview', 'categories', 'feedback'].forEach(tab => {
-            document.getElementById(tab + 'Tab').classList.toggle('hidden', tab !== tabName);
+            const tabEl = document.getElementById(tab + 'Tab');
+            if (tabEl) {
+                tabEl.classList.toggle('hidden', tab !== tabName);
+            }
         });
 
         currentTab = tabName;
@@ -905,17 +1022,22 @@
         const avgSatisfaction = ratingCount > 0 ? (totalSatisfaction / ratingCount).toFixed(1) : 0;
         const recommendationRate = ratingCount > 0 ? Math.round((wouldRecommend / ratingCount) * 100) : 0;
 
-        document.getElementById('totalResponses').textContent = totalResponses;
-        document.getElementById('avgSatisfaction').textContent = avgSatisfaction + '/5';
-        document.getElementById('recommendationRate').textContent = recommendationRate + '%';
+        const totalEl = document.getElementById('totalResponses');
+        const avgEl = document.getElementById('avgSatisfaction');
+        const recEl = document.getElementById('recommendationRate');
+
+        if (totalEl) totalEl.textContent = totalResponses;
+        if (avgEl) avgEl.textContent = avgSatisfaction + '/5';
+        if (recEl) recEl.textContent = recommendationRate + '%';
     }
 
     function updateSatisfactionChart() {
-        const ctx = document.getElementById('satisfactionChart').getContext('2d');
+        const ctx = document.getElementById('satisfactionChart')?.getContext('2d');
+        if (!ctx) return;
 
-        // Clear existing chart
-        if (window.satisfactionChartInstance) {
-            window.satisfactionChartInstance.destroy();
+        // Destroy existing chart
+        if (chartInstances.satisfaction) {
+            chartInstances.satisfaction.destroy();
         }
 
         const ratingCounts = [0, 0, 0, 0, 0];
@@ -925,7 +1047,7 @@
             });
         });
 
-        window.satisfactionChartInstance = new Chart(ctx, {
+        chartInstances.satisfaction = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
@@ -945,7 +1067,10 @@
                 responsive: true,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
@@ -953,12 +1078,17 @@
     }
 
     function updateCategoryCharts() {
-        // Category satisfaction chart
-        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        updateCategoryRadarChart();
+        updateCategoryDistributionChart();
+    }
 
-        // Clear existing chart
-        if (window.categoryChartInstance) {
-            window.categoryChartInstance.destroy();
+    function updateCategoryRadarChart() {
+        const ctx = document.getElementById('categoryChart')?.getContext('2d');
+        if (!ctx) return;
+
+        // Destroy existing chart
+        if (chartInstances.categoryRadar) {
+            chartInstances.categoryRadar.destroy();
         }
 
         const categoryData = {};
@@ -981,7 +1111,15 @@
             categoryData[cat].count > 0 ? (categoryData[cat].total / categoryData[cat].count).toFixed(1) : 0
         );
 
-        window.categoryChartInstance = new Chart(categoryCtx, {
+        if (categories.length === 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return;
+        }
+
+        chartInstances.categoryRadar = new Chart(ctx, {
             type: 'radar',
             data: {
                 labels: categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' ')),
@@ -994,21 +1132,27 @@
                 }]
             },
             options: {
+                responsive: true,
                 scales: {
                     r: {
                         beginAtZero: true,
-                        max: 5
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
                     }
                 }
             }
         });
+    }
 
-        // Category distribution chart
-        const distCtx = document.getElementById('categoryDistChart').getContext('2d');
+    function updateCategoryDistributionChart() {
+        const ctx = document.getElementById('categoryDistChart')?.getContext('2d');
+        if (!ctx) return;
 
-        // Clear existing chart
-        if (window.categoryDistChartInstance) {
-            window.categoryDistChartInstance.destroy();
+        // Destroy existing chart
+        if (chartInstances.categoryDist) {
+            chartInstances.categoryDist.destroy();
         }
 
         const categoryCounts = {};
@@ -1017,7 +1161,15 @@
             categoryCounts[response.category] = (categoryCounts[response.category] || 0) + 1;
         });
 
-        window.categoryDistChartInstance = new Chart(distCtx, {
+        if (Object.keys(categoryCounts).length === 0) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2);
+            return;
+        }
+
+        chartInstances.categoryDist = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: Object.keys(categoryCounts).map(cat =>
@@ -1031,7 +1183,9 @@
                         '#45b7d1',
                         '#96ceb4',
                         '#feca57',
-                        '#ff9ff3'
+                        '#ff9ff3',
+                        '#a8e6cf',
+                        '#ffd93d'
                     ]
                 }]
             },
@@ -1048,13 +1202,21 @@
 
     function updateFeedbackDisplay() {
         const container = document.getElementById('feedbackContainer');
-        let html = '';
+        if (!container) return;
 
-        surveyData.slice(-10).reverse().forEach(response => {
+        if (surveyData.length === 0) {
+            container.innerHTML = '<p>No feedback responses yet.</p>';
+            return;
+        }
+
+        let html = '';
+        const recentFeedback = surveyData.slice(-10).reverse();
+
+        recentFeedback.forEach(response => {
             const categoryName = response.category.charAt(0).toUpperCase() + response.category.slice(1).replace('-', ' ');
 
             Object.entries(response.feedback).forEach(([question, answer]) => {
-                if (answer.trim()) {
+                if (answer && answer.trim()) {
                     html += `
                             <div class="feedback-item">
                                 <strong>${categoryName}:</strong> ${question}
@@ -1068,105 +1230,13 @@
         container.innerHTML = html || '<p>No feedback responses yet.</p>';
     }
 
-    function resetData() {
-        if (!isAdminLoggedIn) {
-            alert('Admin access required for this function.');
-            return;
+    // Initialize application
+    window.addEventListener('load', () => {
+        // Load initial data when viewing results
+        if (window.location.hash === '#results') {
+            showResults();
         }
-
-        if (confirm('Are you sure you want to reset all survey data? This action cannot be undone.')) {
-            surveyData = [];
-            updateCharts();
-            updateAdminStats();
-            alert('All survey data has been reset successfully.');
-        }
-    }
-
-    function exportData() {
-        if (!isAdminLoggedIn) {
-            alert('Admin access required for this function.');
-            return;
-        }
-
-        const dataStr = JSON.stringify(surveyData, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'festival-survey-data.json';
-        link.click();
-        URL.revokeObjectURL(url);
-    }
-
-    function clearCharts() {
-        // Destroy existing charts if they exist
-        Chart.helpers.each(Chart.instances, function(instance) {
-            instance.destroy();
-        });
-    }
-
-    // Initialize with sample data
-    function initializeSampleData() {
-        const sampleResponses = [
-            {
-                id: 1,
-                category: 'first-time',
-                timestamp: new Date().toISOString(),
-                ratings: {
-                    'How easy was it to find information about the festival?': 4,
-                    'How clear were the directions and signage?': 5,
-                    'How welcoming did the staff make you feel?': 5,
-                    'How well did the festival meet your expectations?': 4,
-                    'How likely are you to attend next year?': 5
-                },
-                feedback: {
-                    'What attracted you to attend this festival for the first time?': 'Great lineup and reasonable prices',
-                    'What was the highlight of your festival experience?': 'Amazing main stage performances',
-                    'What would you change or improve for next year?': 'More food options and shorter queues'
-                }
-            },
-            {
-                id: 2,
-                category: 'returning',
-                timestamp: new Date().toISOString(),
-                ratings: {
-                    'How does this year compare to previous years?': 4,
-                    'How satisfied were you with the lineup/programming?': 5,
-                    'How well were any previous concerns addressed?': 4,
-                    'How satisfied were you with new additions this year?': 4,
-                    'How likely are you to return next year?': 5
-                },
-                feedback: {
-                    'What keeps bringing you back to this festival?': 'Great atmosphere and community feeling',
-                    'What improvements have you noticed over the years?': 'Better organization and facilities',
-                    'What would make you even more excited for next year?': 'More diverse music genres'
-                }
-            },
-            {
-                id: 3,
-                category: 'guest',
-                timestamp: new Date().toISOString(),
-                ratings: {
-                    'How satisfied were you with the amenities provided for you?': 5,
-                    'How comfortable/suitable did the backstage areas feel?': 5,
-                    'How responsive was the care from the team and other volunteers?': 5,
-                    'How likely are you to return to CF again?': 3
-                },
-                feedback: {
-                    'What Guest perks did you value most?': 'Dedicated viewing areas and complimentary drinks',
-                    'What Guest services or amenities were missing?': 'Could use more seating in VIP areas',
-                    'How could we enhance the experience for yourself?': 'Artist meet and greets would be amazing'
-                }
-            }
-        ];
-
-        surveyData = sampleResponses;
-    }
-
-    // Initialize sample data when page loads
-    window.onload = function() {
-        initializeSampleData();
-    };
+    });
 </script>
 
 <footer id="footer" role="contentinfo" class="site-footer">
