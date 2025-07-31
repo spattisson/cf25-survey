@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<!-- version 1.3 -->
+<!-- version 1.4 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -592,10 +592,10 @@
     }
 
     // API functions
-    async function apiCall(action, data = {}) {
+    async function apiCall(action, method, data = {}) {
         try {
             const response = await fetch(`${API_BASE_URL}?action=${action}`, {
-                method: 'POST',
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -614,7 +614,7 @@
     }
 
     async function loadSurveyData() {
-        const result = await apiCall('surveys');
+        const result = await apiCall('surveys', 'GET');
         if (result.success) {
             surveyData = result.data;
             updateCharts();
@@ -703,7 +703,7 @@
 
         // Submit to server
         setLoading('submitBtn');
-        const result = await apiCall('submit', response);
+        const result = await apiCall('submit', 'POST', response);
         setLoading('submitBtn', false);
 
         if (result.success) {
@@ -768,7 +768,7 @@
         const password = document.getElementById('adminPassword').value;
 
         setLoading('adminLoginBtn');
-        const result = await apiCall('validate_admin', { password });
+        const result = await apiCall('validate_admin', 'POST', { password });
         setLoading('adminLoginBtn', false);
 
         if (result.success) {
@@ -814,7 +814,7 @@
             return;
         }
 
-        const result = await apiCall('change_password', {
+        const result = await apiCall('change_password', 'POST', {
             current_password: currentPassword,
             new_password: newPassword
         });
@@ -827,7 +827,7 @@
     }
 
     async function updateAdminStats() {
-        const result = await apiCall('stats');
+        const result = await apiCall('stats', 'GET');
         if (!result.success) {
             showMessage('adminMessage', 'Failed to load statistics: ' + result.error, 'error');
             return;
@@ -875,7 +875,7 @@
         if (!password) return;
 
         setLoading('resetBtn');
-        const result = await apiCall('reset_data', { password });
+        const result = await apiCall('reset_data', 'POST', { password });
         setLoading('resetBtn', false);
 
         if (result.success) {
@@ -890,7 +890,7 @@
 
     async function exportData() {
         setLoading('exportBtn');
-        const result = await apiCall('surveys');
+        const result = await apiCall('surveys', 'GET');
         setLoading('exportBtn', false);
 
         if (result.success) {
@@ -912,8 +912,8 @@
         setLoading('exportSummaryBtn');
 
         // Get fresh stats for report
-        const statsResult = await apiCall('stats');
-        const surveyResult = await apiCall('surveys');
+        const statsResult = await apiCall('stats', 'GET');
+        const surveyResult = await apiCall('surveys', 'GET');
 
         setLoading('exportSummaryBtn', false);
 
