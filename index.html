@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<!-- version 1.4 -->
+<!-- version 1.5 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -594,13 +594,23 @@
     // API functions
     async function apiCall(action, method, data = {}) {
         try {
-            const response = await fetch(`${API_BASE_URL}?action=${action}`, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
+            if (method !== 'GET') {
+                const response = await fetch(`${API_BASE_URL}?action=${action}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+            }
+            else {
+                const response = await fetch(`${API_BASE_URL}?action=${action}`, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+            }
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
