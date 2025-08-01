@@ -589,7 +589,6 @@
         }
     }
 
-    // FIXED API functions - resolved "response is not defined" error
     async function apiCall(action, method, data = {}) {
         let response; // Declare response variable in the correct scope
         
@@ -612,7 +611,7 @@
             }
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status} when method is: ${method} \nand action is: ${action} \nand data is: \n${data}`);
             }
 
             return await response.json();
