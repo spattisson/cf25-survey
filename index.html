@@ -897,8 +897,11 @@
             return;
         }
 
+        const password = prompt('Enter admin password to confirm:');
+        if (!password) return;
+
         setLoading('resetBtn');
-        const result = await apiCall('reset_data', 'POST');
+        const result = await apiCall('reset_data', 'POST', { password });
         setLoading('resetBtn', false);
 
         if (result.success) {
@@ -1270,8 +1273,8 @@
             <a href="http://cedarwoodfestival.com/contact">Contact</a> &nbsp;
             <a href="https://cedarwoodfestival.com/donate/">Donate</a> &nbsp;
             <a href="http://cedarwoodfestival.com/privacy-policy/">Privacy</a> &nbsp;
-            <a href="http://cedarwoodfestival.com/terms-and-conditions/">T&amp;C's</a>
-            <a href="#" onclick="requestAdminPassword(); return false;">Login</a>
+            <a href="http://cedarwoodfestival.com/terms-and-conditions/">T&amp;C's</a> &nbsp;
+            <a href="#" onclick="requestAdminPassword(); return false;">Login</a> &nbsp;
         </p>
         <p class="copyright">© Cedarwood Festival. All Rights Reserved. Registered Charity No. 518744.</p>
 
