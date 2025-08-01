@@ -359,6 +359,12 @@
         <div id="surveyMessage"></div>
     </div>
 
+    <!-- Thank you Section -->
+    <div class="results-section" id="thankYouSection">
+        <h2>Thank you for your feedback</h2>
+        <p>Please consider sharing your feedback publicly on <a href="https://www.google.com/search?sca_esv=3d1e29cf7e253e0e&rlz=1C5CHFA_enGB1153GB1153&sxsrf=AE3TifMzUBAIlCxvDuij5KiUCbntkUwtzg:1754066382984&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E8bBlN-ai7IMDF2LMfCHf4e9JWvkYy8vN1WbSnI9Q7GNq3sO4zNEOZQzoQH0sxqhA0v1UaabvoIV1ZkRm6UyJb3hGa6FPeq739DoTdCEf5_eAYbS2Q%3D%3D&q=Cedarwood+Festival+Reviews&sa=X&ved=2ahUKEwirh669huqOAxXJQkEAHawRM54Q0bkNegQIIhAE&biw=1868&bih=968&dpr=1&sei=Mu6MaI6DDL6ghbIPoIfnmAU">Google Reviews.</a></p>
+    </div>
+
     <!-- Results Section -->
     <div class="results-section" id="resultsSection">
         <div class="tabs">
@@ -424,6 +430,8 @@
         <button class="btn" onclick="exportData()">Export all data</button>
         <button class="btn" onclick="resetData()">Reset all data</button>
     </div>
+
+    <!-- Login form -->
     <div class="admin-login-form" id="adminLoginForm">
         <h2>Admin login</h2>
         <label for="adminPassword">Enter password</label>
@@ -685,6 +693,8 @@
     }
 
     async function submitSurvey() {
+        setLoading('submitBtn'); // prevent multiple submissions
+
         const category = document.getElementById('attendeeCategory').value;
         const questions = questionSets[category];
 
@@ -710,14 +720,13 @@
         });
 
         // Submit to server
-        setLoading('submitBtn');
         const result = await apiCall('submit', 'POST', response);
         setLoading('submitBtn', false);
 
         if (result.success) {
-            showMessage('surveyMessage', 'Thank you! Your survey has been submitted successfully.', 'success');
+            showMessage('surveyMessage', 'Thank you! Your feedback has been submitted successfully.', 'success');
         } else {
-            showMessage('surveyMessage', 'Failed to submit survey: ' + result.error, 'error');
+            showMessage('surveyMessage', 'Failed to submit feedback: ' + result.error, 'error');
         }
     }
 
@@ -727,6 +736,15 @@
         document.getElementById('resultsSection').style.display = 'block';
         document.getElementById('adminSection').style.display = 'none';
         document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('thankYouSection').style.display = 'none';
+    }
+
+    function hideSurvey() {
+        document.getElementById('surveySection').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('thankYouSection').style.display = 'block';
     }
 
     function showSurvey() {
@@ -734,7 +752,7 @@
         document.getElementById('resultsSection').style.display = 'none';
         document.getElementById('adminSection').style.display = 'none';
         document.getElementById('adminLoginForm').style.display = 'none';
-
+        document.getElementById('thankYouSection').style.display = 'none';
 
         // Reset form
         document.getElementById('attendeeCategory').value = '';
