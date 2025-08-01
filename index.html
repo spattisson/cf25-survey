@@ -33,7 +33,6 @@
         .brand{
             padding: 30px;
             text-align: center;
-            padding-bottom: 30px;
         }
 
         .header {
@@ -206,7 +205,7 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .results-section, .admin-section, .admin-login-form {
+        .results-section, .admin-login-form {
             display: none;
             padding: 30px;
             background: white;
@@ -616,8 +615,7 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            return result;
+            return await response.json();
         } catch (error) {
             console.error('API call failed:', error);
             return { success: false, error: error.message };
@@ -758,13 +756,11 @@
         // Reset login form if not logged in
         if (!isAdminLoggedIn) {
             document.getElementById('adminLoginForm').style.display = 'block';
-            document.getElementById('adminControls').classList.add('hidden');
             document.getElementById('adminSection').classList.add('hidden');
             document.getElementById('adminPassword').value = '';
             document.getElementById('adminLoginMessage').innerHTML = '';
         } else {
             document.getElementById('adminLoginForm').style.display = 'none';
-            document.getElementById('adminControls').classList.remove('hidden');
             document.getElementById('adminSection').classList.remove('hidden');
             //updateAdminStats();
         }
@@ -786,7 +782,6 @@
             isAdminLoggedIn = true;
             document.getElementById('adminSection').classList.remove('hidden');
             document.getElementById('adminLoginForm').style.display = 'none';
-            document.getElementById('adminControls').classList.remove('hidden');
             showMessage('adminLoginMessage', 'Admin access granted successfully!', 'success');
             updateAdminStats();
             alert('Admin access granted successfully!');
@@ -799,9 +794,7 @@
 
     function adminLogout() {
         isAdminLoggedIn = false;
-        //document.getElementById('adminLoginForm').style.display = 'none';
         document.getElementById('adminLoginForm').style.display = 'block';
-        document.getElementById('adminControls').classList.add('hidden');
         document.getElementById('adminSection').classList.add('hidden');
         document.getElementById('adminPassword').value = '';
         document.getElementById('adminLoginMessage').innerHTML = '';
