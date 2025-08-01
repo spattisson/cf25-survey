@@ -1,4 +1,6 @@
 <?php
+// FILE NO LONGER NEEDED - QUEUED FOR DELETION
+// Code replicated in php_backend.php
 // Load WordPress configuration to access database credentials
 require_once('../wp-config.php');
 

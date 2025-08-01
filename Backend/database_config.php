@@ -1,4 +1,5 @@
 <?php
+// FILE NO LONGER NEEDED - QUEUED FOR DELETION
 // config.php - Database configuration
 // Copy this file and update with your actual database credentials
 

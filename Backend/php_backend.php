@@ -1,5 +1,4 @@
 <?php
-// verson 1.2
 // Load WordPress configuration to access database credentials
 require_once('../wp-config.php');
 
