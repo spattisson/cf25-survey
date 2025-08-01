@@ -744,6 +744,7 @@
 
     // Navigation functions
     function showResults() {
+        loadSurveyData();
         updateCharts();
         document.getElementById('surveySection').style.display = 'none';
         document.getElementById('resultsSection').style.display = 'block';
