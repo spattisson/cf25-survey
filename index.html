@@ -36,11 +36,11 @@
         }
 
         .header {
-            background: #667eea;
+            background: silver;
             padding-top: 30px;
             padding-bottom: 30px;
             text-align: center;
-            color: white;
+            color: black;
         }
 
         .header h1 {
@@ -342,10 +342,10 @@
             <label for="attendeeCategory">What best describes you as a festival attendee?</label>
             <select id="attendeeCategory" onchange="updateQuestions()">
                 <option value="">Select your category...</option>
-                <option value="first-time">First-Time Attendee</option>
+                <option value="first-time">First time Attendee</option>
                 <option value="returning">Returning Attendee</option>
-                <option value="guest">Guest (Free Ticket Holder)</option>
-                <option value="speaker">Speaker/Artist</option>
+                <!--<option value="guest">Guest (Free Ticket Holder)</option> -->
+                <option value="speaker">Speaker/Artist/Guest</option>
                 <option value="exhibitor">Marketplace Exhibitor</option>
                 <option value="vendor">Food Vendor/Partner/Supplier</option>
                 <option value="volunteer">Volunteer/TRIBE member</option>
@@ -368,6 +368,7 @@
     <div class="results-section" id="thankYouSection">
         <h2>Thank you for your feedback</h2>
         <p>Please consider sharing your feedback publicly on <a href="https://www.google.com/search?sca_esv=3d1e29cf7e253e0e&rlz=1C5CHFA_enGB1153GB1153&sxsrf=AE3TifMzUBAIlCxvDuij5KiUCbntkUwtzg:1754066382984&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E8bBlN-ai7IMDF2LMfCHf4e9JWvkYy8vN1WbSnI9Q7GNq3sO4zNEOZQzoQH0sxqhA0v1UaabvoIV1ZkRm6UyJb3hGa6FPeq739DoTdCEf5_eAYbS2Q%3D%3D&q=Cedarwood+Festival+Reviews&sa=X&ved=2ahUKEwirh669huqOAxXJQkEAHawRM54Q0bkNegQIIhAE&biw=1868&bih=968&dpr=1&sei=Mu6MaI6DDL6ghbIPoIfnmAU">Google Reviews.</a></p>
+        <p>If you have any other feedback you wish to share directly with the team from Cedarwood Festival 2025, please feel free to email <a href="mailto:feedback@cedarwoodfestival.com">feedback@cedarwoodfestival.com</a> and the team will review your feedback.</p>
         <div style="text-align: center; margin-top: 30px;">
             <button class="btn" onclick="showSurvey()">Take Another Survey</button>
         </div>
@@ -477,14 +478,14 @@
             title: 'Returning Attendee Questions',
             ratings: [
                 'How does this year compare to previous years?',
-                'How satisfied were you with the lineup/programming?',
-                'How well were any previous concerns addressed?',
-                'How satisfied were you with new additions this year?',
+                'How satisfied were you with the programme and activities?',
+                'How satisfied were you with the camping and food facilities?',
                 'How likely are you to return next year?'
             ],
             feedback: [
                 'What keeps bringing you back to this festival?',
-                'What improvements have you noticed over the years?',
+                'What was the highlight of your festival experience?',
+                'What improvements have you noticed since previous years?',
                 'What would make you even more excited for next year?',
                 'Which church fellowship are you associated with? (optional)'
             ]
@@ -504,18 +505,18 @@
             ]
         },
         'speaker': {
-            title: 'Speaker/Artist Questions',
+            title: 'Speaker/Artist/Contributor Questions',
             ratings: [
                 'How satisfied were you with the backstage facilities?',
                 'How well were you supported by festival staff?',
+                'How satisfied were you with the accommodation/camping and food facilities?',
                 'How satisfied were you with sound/technical support?',
-                'How well did the audience respond to your performance?',
-                'How likely are you to perform at this festival again?'
+                'How likely are you to return to CF again?'
             ],
             feedback: [
-                'What made performing at this festival special?',
-                'What challenges did you face as a performer?',
-                'What would improve the artist experience?'
+                'What made being part of this festival special?',
+                'What challenges did you face as a contributor?',
+                'What would improve the experience for you?'
             ]
         },
         'exhibitor': {
@@ -523,9 +524,9 @@
             ratings: [
                 'How satisfied were you with your assigned location?',
                 'How well did festival management support exhibitors?',
-                'How satisfied were you with foot traffic/sales?',
+                'How satisfied were you with footfall/engagement?',
                 'How clear were exhibitor guidelines and communication?',
-                'How likely are you to participate as a exhibitors again?'
+                'How likely are you to participate as an exhibitor again?'
             ],
             feedback: [
                 'What worked well for your exhibitor experience?',
@@ -551,7 +552,7 @@
         'volunteer': {
             title: 'Volunteer/TRIBE Member Questions',
             ratings: [
-                'How well was your application responded to?',
+                'How well was your volunteer application responded to?',
                 'How satisfied were you with your assigned role?',
                 'How well did volunteer management support you?',
                 'How satisfied were you with your access to food/breaks/festival events?',
@@ -1265,7 +1266,15 @@
         }
     });
 </script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-129685613-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-129685613-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
+    gtag('config', 'UA-129685613-1');
+</script>
 <footer id="footer" role="contentinfo" class="site-footer">
 
     <div class="footer-bottom">
