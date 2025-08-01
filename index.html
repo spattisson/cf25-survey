@@ -364,6 +364,10 @@
         <h2>Thank you for your feedback</h2>
         <p>Please consider sharing your feedback publicly on <a href="https://www.google.com/search?sca_esv=3d1e29cf7e253e0e&rlz=1C5CHFA_enGB1153GB1153&sxsrf=AE3TifMzUBAIlCxvDuij5KiUCbntkUwtzg:1754066382984&si=AMgyJEtREmoPL4P1I5IDCfuA8gybfVI2d5Uj7QMwYCZHKDZ-E8bBlN-ai7IMDF2LMfCHf4e9JWvkYy8vN1WbSnI9Q7GNq3sO4zNEOZQzoQH0sxqhA0v1UaabvoIV1ZkRm6UyJb3hGa6FPeq739DoTdCEf5_eAYbS2Q%3D%3D&q=Cedarwood+Festival+Reviews&sa=X&ved=2ahUKEwirh669huqOAxXJQkEAHawRM54Q0bkNegQIIhAE&biw=1868&bih=968&dpr=1&sei=Mu6MaI6DDL6ghbIPoIfnmAU">Google Reviews.</a></p>
     </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <button class="btn" onclick="showSurvey()">Take Another Survey</button>
+        <button class="btn" onclick="requestAdminPassword()">Show admin functions</button>
+    </div>
 
     <!-- Results Section -->
     <div class="results-section" id="resultsSection">
@@ -418,7 +422,6 @@
 
         <div style="text-align: center; margin-top: 30px;">
             <button class="btn" onclick="showSurvey()">Take Another Survey</button>
-<!--        <button class="btn" onclick="showAdminPanel()">Admin Panel</button>-->
             <button class="btn" onclick="requestAdminPassword()">Show admin functions</button>
         </div>
     </div>
@@ -725,6 +728,7 @@
 
         if (result.success) {
             showMessage('surveyMessage', 'Thank you! Your feedback has been submitted successfully.', 'success');
+            hideSurvey();
         } else {
             showMessage('surveyMessage', 'Failed to submit feedback: ' + result.error, 'error');
         }
