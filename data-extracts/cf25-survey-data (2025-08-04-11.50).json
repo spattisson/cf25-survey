@@ -1,0 +1,309 @@
+[
+  {
+    "id": 17,
+    "category": "first-time",
+    "timestamp": "2025-08-04 07:21:08",
+    "ratings": {
+      "How easy was it to find information about the festival?": 4,
+      "How clear were the directions and signage?": 4,
+      "How welcoming did the staff make you feel?": 5,
+      "How well did the festival meet your expectations?": 4,
+      "How likely are you to attend next year?": 3
+    },
+    "feedback": []
+  },
+  {
+    "id": 18,
+    "category": "first-time",
+    "timestamp": "2025-08-04 07:21:06",
+    "ratings": {
+      "How easy was it to find information about the festival?": 4,
+      "How clear were the directions and signage?": 4,
+      "How welcoming did the staff make you feel?": 5,
+      "How well did the festival meet your expectations?": 4,
+      "How likely are you to attend next year?": 3
+    },
+    "feedback": []
+  },
+  {
+    "id": 16,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 20:47:09",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "Bring part of an amazing team of hard working people",
+      "What operational challenges did you face?": "Staying in touch",
+      "How could volunteer support be improved?": "Clarity re food"
+    }
+  },
+  {
+    "id": 14,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 19:39:21",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 4,
+      "How clear were volunteer guidelines and communication?": 4,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "Loved the team work \nLoved that prayer was assigned throughout the event \n",
+      "What operational challenges did you face?": "Getting to and from accommodation ",
+      "How could volunteer support be improved?": "Loved that Emma kept a clear schedule for us all and continued to keep us all updated via WhatsApp "
+    }
+  },
+  {
+    "id": 13,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 19:39:20",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 4,
+      "How clear were volunteer guidelines and communication?": 4,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "Loved the team work \nLoved that prayer was assigned throughout the event \n",
+      "What operational challenges did you face?": "Getting to and from accommodation ",
+      "How could volunteer support be improved?": "Loved that Emma kept a clear schedule for us all and continued to keep us all updated via WhatsApp "
+    }
+  },
+  {
+    "id": 15,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 19:39:19",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 4,
+      "How clear were volunteer guidelines and communication?": 4,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "Loved the team work \nLoved that prayer was assigned throughout the event \n",
+      "What operational challenges did you face?": "Getting to and from accommodation ",
+      "How could volunteer support be improved?": "Loved that Emma kept a clear schedule for us all and continued to keep us all updated via WhatsApp "
+    }
+  },
+  {
+    "id": 11,
+    "category": "returning",
+    "timestamp": "2025-08-03 17:45:12",
+    "ratings": {
+      "How does this year compare to previous years?": 1,
+      "How satisfied were you with the programme and activities?": 1,
+      "How satisfied were you with the camping and food facilities?": 1,
+      "How likely are you to return next year?": 2
+    },
+    "feedback": {
+      "What keeps bringing you back to this festival?": "The Lord",
+      "What was the highlight of your festival experience?": "Worship ",
+      "What improvements have you noticed since previous years?": "None",
+      "Which church fellowship are you associated with? (optional)": "Family life church "
+    }
+  },
+  {
+    "id": 12,
+    "category": "returning",
+    "timestamp": "2025-08-03 17:45:11",
+    "ratings": {
+      "How does this year compare to previous years?": 1,
+      "How satisfied were you with the programme and activities?": 1,
+      "How satisfied were you with the camping and food facilities?": 1,
+      "How likely are you to return next year?": 2
+    },
+    "feedback": {
+      "What keeps bringing you back to this festival?": "The Lord",
+      "What was the highlight of your festival experience?": "Worship ",
+      "What improvements have you noticed since previous years?": "None",
+      "Which church fellowship are you associated with? (optional)": "Family life church "
+    }
+  },
+  {
+    "id": 10,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 17:38:09",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "The training beforehand helped manage the role",
+      "What operational challenges did you face?": "Not having enough people to take up some of the time slots so they needed covering ",
+      "How could volunteer support be improved?": "Just more volunteers next year to help cover the roles "
+    }
+  },
+  {
+    "id": 9,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 17:38:07",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "The training beforehand helped manage the role",
+      "What operational challenges did you face?": "Not having enough people to take up some of the time slots so they needed covering ",
+      "How could volunteer support be improved?": "Just more volunteers next year to help cover the roles "
+    }
+  },
+  {
+    "id": 8,
+    "category": "returning",
+    "timestamp": "2025-08-03 17:26:46",
+    "ratings": {
+      "How does this year compare to previous years?": 4,
+      "How satisfied were you with the programme and activities?": 3,
+      "How satisfied were you with the camping and food facilities?": 3,
+      "How likely are you to return next year?": 5
+    },
+    "feedback": {
+      "What keeps bringing you back to this festival?": "It's a local Christian festival ",
+      "What was the highlight of your festival experience?": "4 year old been able to play with others in the big tent and meant as a parent I could still interact with others.\nThe Friday night £15 entry fee. \nRoy crowne speaking and the Sunday morning worship was alot more easy/mellow from the previous years of very loud music.",
+      "What improvements have you noticed since previous years?": "Worship not as loud.\nFood vendors better\n£15.00 entry for Friday night\n",
+      "What would make you even more excited for next year?": "Under 5s to have more provison. Games/crafts\nAdult and child activities crafts that they can do today. \nFamily picnic/bbq\nBouncy castle for kids\nCheap day rates \nUnder 5 free unless something on for them\n\n",
+      "Which church fellowship are you associated with? (optional)": "Hollybush"
+    }
+  },
+  {
+    "id": 7,
+    "category": "returning",
+    "timestamp": "2025-08-03 17:26:44",
+    "ratings": {
+      "How does this year compare to previous years?": 4,
+      "How satisfied were you with the programme and activities?": 3,
+      "How satisfied were you with the camping and food facilities?": 3,
+      "How likely are you to return next year?": 5
+    },
+    "feedback": {
+      "What keeps bringing you back to this festival?": "It's a local Christian festival ",
+      "What was the highlight of your festival experience?": "4 year old been able to play with others in the big tent and meant as a parent I could still interact with others.\nThe Friday night £15 entry fee. \nRoy crowne speaking and the Sunday morning worship was alot more easy/mellow from the previous years of very loud music.",
+      "What improvements have you noticed since previous years?": "Worship not as loud.\nFood vendors better\n£15.00 entry for Friday night\n",
+      "What would make you even more excited for next year?": "Under 5s to have more provison. Games/crafts\nAdult and child activities crafts that they can do today. \nFamily picnic/bbq\nBouncy castle for kids\nCheap day rates \nUnder 5 free unless something on for them\n\n",
+      "Which church fellowship are you associated with? (optional)": "Hollybush"
+    }
+  },
+  {
+    "id": 6,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 15:58:21",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": []
+  },
+  {
+    "id": 5,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 14:53:45",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "-Volunteer goodie bags \n-Core team worked in unison and gelled wonderfully\n-Weather!!! ??",
+      "What operational challenges did you face?": "-Not knowing exact times Guests were arriving\n-walkie talkies sometimes hard to hear without ear piece(can be disruptive when in loud speaker) ",
+      "How could volunteer support be improved?": "I felt supported!"
+    }
+  },
+  {
+    "id": 4,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 14:53:43",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "-Volunteer goodie bags \n-Core team worked in unison and gelled wonderfully\n-Weather!!! ??",
+      "What operational challenges did you face?": "-Not knowing exact times Guests were arriving\n-walkie talkies sometimes hard to hear without ear piece(can be disruptive when in loud speaker) ",
+      "How could volunteer support be improved?": "I felt supported!"
+    }
+  },
+  {
+    "id": 2,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 14:53:40",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "-Volunteer goodie bags \n-Core team worked in unison and gelled wonderfully\n-Weather!!! ??",
+      "What operational challenges did you face?": "-Not knowing exact times Guests were arriving\n-walkie talkies sometimes hard to hear without ear piece(can be disruptive when in loud speaker) ",
+      "How could volunteer support be improved?": "I felt supported!"
+    }
+  },
+  {
+    "id": 3,
+    "category": "volunteer",
+    "timestamp": "2025-08-03 14:53:39",
+    "ratings": {
+      "How well was your volunteer application responded to?": 5,
+      "How satisfied were you with your assigned role?": 5,
+      "How well did volunteer management support you?": 5,
+      "How satisfied were you with your access to food/breaks/festival events?": 5,
+      "How clear were volunteer guidelines and communication?": 5,
+      "How likely are you to participate as a volunteer again?": 5
+    },
+    "feedback": {
+      "What worked well for your volunteer experience?": "-Volunteer goodie bags \n-Core team worked in unison and gelled wonderfully\n-Weather!!! ??",
+      "What operational challenges did you face?": "-Not knowing exact times Guests were arriving\n-walkie talkies sometimes hard to hear without ear piece(can be disruptive when in loud speaker) ",
+      "How could volunteer support be improved?": "I felt supported!"
+    }
+  },
+  {
+    "id": 1,
+    "category": "speaker",
+    "timestamp": "2025-08-03 14:39:26",
+    "ratings": {
+      "How satisfied were you with the backstage facilities?": 5,
+      "How well were you supported by festival staff?": 5,
+      "How satisfied were you with the accommodation/camping and food facilities?": 5,
+      "How satisfied were you with sound/technical support?": 5,
+      "How likely are you to return to CF again?": 5
+    },
+    "feedback": {
+      "What made being part of this festival special?": "The welcome and weather - loved it! ",
+      "What challenges did you face as a contributor?": "Signage pre event ",
+      "What would improve the experience for you?": "Signage pre event "
+    }
+  }
+]

@@ -703,44 +703,373 @@
         stars[0].parentElement.setAttribute('data-value', value);
     }
 
+    // Global variables to track submission state
+    let isCurrentlySubmitting = false;
+    let submissionCompleted = false;
+    let lastSubmissionTime = 0;
+    const MINIMUM_WAIT_TIME = 4000; // 4 seconds between attempts
+
     async function submitSurvey() {
-        setLoading('submitBtn'); // prevent multiple submissions
+        const currentTime = Date.now();
 
+        // Check if already submitting
+        if (isCurrentlySubmitting) {
+            showMessage('surveyMessage', '⏳ Please wait, your survey is being submitted...', 'error');
+            return;
+        }
+
+        // Check if already submitted successfully
+        if (submissionCompleted) {
+            showMessage('surveyMessage', '✅ Survey already submitted! Redirecting to thank you page...', 'error');
+            setTimeout(() => hideSurvey(), 1500);
+            return;
+        }
+
+        // Check minimum wait time between attempts
+        if (lastSubmissionTime > 0 && (currentTime - lastSubmissionTime) < MINIMUM_WAIT_TIME) {
+            const waitTime = Math.ceil((MINIMUM_WAIT_TIME - (currentTime - lastSubmissionTime)) / 1000);
+            showMessage('surveyMessage', `⏱️ Please wait ${waitTime} more seconds before trying again.`, 'error');
+            return;
+        }
+
+        // Validate form before starting submission
         const category = document.getElementById('attendeeCategory').value;
+        if (!category) {
+            showMessage('surveyMessage', '⚠️ Please select your attendee category first.', 'error');
+            return;
+        }
+
+        // Check if at least one rating is provided
         const questions = questionSets[category];
+        let hasAnyRating = false;
 
-        const response = {
-            id: Date.now(),
-            category: category,
-            timestamp: new Date().toISOString(),
-            ratings: {},
-            feedback: {}
-        };
-
-        // Collect ratings
         questions.ratings.forEach((question, index) => {
             const ratingElement = document.querySelector(`[data-rating="${category}-rating-${index}"]`);
             const value = ratingElement?.getAttribute('data-value') || 0;
-            response.ratings[question] = parseInt(value);
+            if (parseInt(value) > 0) {
+                hasAnyRating = true;
+            }
         });
 
-        // Collect feedback
-        questions.feedback.forEach((question, index) => {
-            const textArea = document.getElementById(`${category}-feedback-${index}`);
-            response.feedback[question] = textArea?.value || '';
-        });
+        if (!hasAnyRating) {
+            showMessage('surveyMessage', '⚠️ Please provide at least one rating before submitting.', 'error');
+            return;
+        }
 
-        // Submit to server
-        const result = await apiCall('submit', 'POST', response);
-        setLoading('submitBtn', false);
+        // Set submission state
+        isCurrentlySubmitting = true;
+        lastSubmissionTime = currentTime;
 
-        if (result.success) {
-            showMessage('surveyMessage', 'Thank you! Your feedback has been submitted successfully.', 'success');
-            hideSurvey();
-        } else {
-            showMessage('surveyMessage', 'Failed to submit feedback: ' + result.error, 'error');
+        // Disable submit button immediately
+        const submitBtn = document.querySelector('#submitSection .btn');
+        const originalButtonText = submitBtn ? submitBtn.innerHTML : 'Submit Survey';
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span>Submitting...';
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.style.pointerEvents = 'none';
+        }
+
+        // Show visual feedback
+        showSubmissionProgress();
+
+        try {
+            // Your existing survey data collection logic
+            const response = {
+                id: Date.now(),
+                category: category,
+                timestamp: new Date().toISOString(),
+                ratings: {},
+                feedback: {},
+                // Add session tracking
+                session_identifier: getSessionIdentifier(),
+                browser_fingerprint: getBrowserFingerprint()
+            };
+
+            // Collect ratings
+            questions.ratings.forEach((question, index) => {
+                const ratingElement = document.querySelector(`[data-rating="${category}-rating-${index}"]`);
+                const value = ratingElement?.getAttribute('data-value') || 0;
+                response.ratings[question] = parseInt(value);
+            });
+
+            // Collect feedback
+            questions.feedback.forEach((question, index) => {
+                const textArea = document.getElementById(`${category}-feedback-${index}`);
+                response.feedback[question] = textArea?.value || '';
+            });
+
+            // Submit using your existing API
+            const result = await apiCall('submit', 'POST', response);
+
+            if (result.success) {
+                submissionCompleted = true;
+                showMessage('surveyMessage', '🎉 Thank you! Your feedback has been submitted successfully.', 'success');
+
+                // Disable entire form
+                disableEntireForm();
+
+                // Store completion in browser storage to prevent page refresh resubmission
+                localStorage.setItem('cf25_survey_completed', JSON.stringify({
+                    timestamp: Date.now(),
+                    category: category,
+                    sessionId: getSessionIdentifier()
+                }));
+
+                // Auto-redirect to thank you page
+                setTimeout(() => {
+                    hideSurvey();
+                }, 2500);
+
+            } else {
+                throw new Error(result.error || 'Submission failed');
+            }
+
+        } catch (error) {
+            // Reset state on error so user can try again
+            isCurrentlySubmitting = false;
+            submissionCompleted = false;
+
+            showMessage('surveyMessage', '❌ Failed to submit: ' + error.message + '. Please try again.', 'error');
+
+            // Re-enable button on error
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalButtonText;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+                submitBtn.style.pointerEvents = 'auto';
+            }
+
+            console.error('Survey submission error:', error);
+
+        } finally {
+            hideSubmissionProgress();
+
+            // Final state management
+            if (submissionCompleted && submitBtn) {
+                submitBtn.innerHTML = '✅ Survey Submitted';
+                submitBtn.style.backgroundColor = '#4caf50';
+                submitBtn.style.color = 'white';
+            }
         }
     }
+
+    // Helper function to disable entire form
+    function disableEntireForm() {
+        // Disable category dropdown
+        const categorySelect = document.getElementById('attendeeCategory');
+        if (categorySelect) {
+            categorySelect.disabled = true;
+            categorySelect.style.opacity = '0.6';
+        }
+
+        // Disable all rating stars
+        document.querySelectorAll('.star').forEach(star => {
+            star.style.pointerEvents = 'none';
+            star.style.opacity = '0.6';
+            star.style.cursor = 'default';
+        });
+
+        // Disable all textareas
+        document.querySelectorAll('#questionsContainer textarea').forEach(textarea => {
+            textarea.disabled = true;
+            textarea.style.opacity = '0.6';
+            textarea.style.cursor = 'not-allowed';
+        });
+
+        // Add visual indicator
+        const questionsContainer = document.getElementById('questionsContainer');
+        if (questionsContainer) {
+            questionsContainer.style.position = 'relative';
+            const overlay = document.createElement('div');
+            overlay.innerHTML = '<div style="text-align: center; padding: 20px; font-size: 18px; color: #4caf50;">✅ Survey Completed</div>';
+            overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            z-index: 10;
+        `;
+            questionsContainer.appendChild(overlay);
+        }
+    }
+
+    // Helper function to create session identifier
+    function getSessionIdentifier() {
+        let sessionId = sessionStorage.getItem('cf25_session_id');
+        if (!sessionId) {
+            sessionId = 'cf25_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            sessionStorage.setItem('cf25_session_id', sessionId);
+        }
+        return sessionId;
+    }
+
+    // Helper function to create browser fingerprint
+    function getBrowserFingerprint() {
+        const fingerprint = btoa(JSON.stringify({
+            userAgent: navigator.userAgent.substr(0, 100), // Truncated for privacy
+            language: navigator.language,
+            platform: navigator.platform,
+            screenResolution: `${screen.width}x${screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timestamp: Math.floor(Date.now() / 1000 / 60) // Rounded to minute
+        })).substr(0, 32);
+        return fingerprint;
+    }
+
+    // Enhanced showSurvey function to reset states
+    function showSurvey() {
+        // Call existing showSurvey logic
+        document.getElementById('surveySection').style.display = 'block';
+        document.getElementById('resultsSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+        document.getElementById('adminLoginForm').style.display = 'none';
+        document.getElementById('thankYouSection').style.display = 'none';
+
+        // Reset form
+        document.getElementById('attendeeCategory').value = '';
+        document.getElementById('questionsContainer').classList.add('hidden');
+        document.getElementById('submitSection').classList.add('hidden');
+        document.getElementById('surveyMessage').innerHTML = '';
+
+        // Reset all submission states
+        isCurrentlySubmitting = false;
+        submissionCompleted = false;
+        lastSubmissionTime = 0;
+
+        // Clear completion flag
+        localStorage.removeItem('cf25_survey_completed');
+
+        // Re-enable all form elements
+        enableEntireForm();
+    }
+
+    // Helper function to re-enable form
+    function enableEntireForm() {
+        // Re-enable category dropdown
+        const categorySelect = document.getElementById('attendeeCategory');
+        if (categorySelect) {
+            categorySelect.disabled = false;
+            categorySelect.style.opacity = '1';
+        }
+
+        // Re-enable submit button
+        const submitBtn = document.querySelector('#submitSection .btn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Submit Survey';
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitBtn.style.pointerEvents = 'auto';
+            submitBtn.style.backgroundColor = '#2AA27C'; // Your original color
+            submitBtn.style.color = 'white';
+        }
+
+        // Remove any overlays
+        document.querySelectorAll('#questionsContainer > div[style*="position: absolute"]').forEach(overlay => {
+            overlay.remove();
+        });
+    }
+
+    // Visual feedback functions
+    function showSubmissionProgress() {
+        hideSubmissionProgress(); // Remove any existing
+
+        const progressDiv = document.createElement('div');
+        progressDiv.id = 'cf25-submission-progress';
+        progressDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(42, 162, 124, 0.95);
+        color: white;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        font-family: inherit;
+    `;
+
+        progressDiv.innerHTML = `
+        <div style="
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        "></div>
+        <h3 style="margin: 0 0 8px 0; font-size: 18px;">Submitting Your Survey</h3>
+        <p style="margin: 0; opacity: 0.9; font-size: 14px;">Please wait, do not refresh or close this page...</p>
+    `;
+
+        document.body.appendChild(progressDiv);
+    }
+
+    function hideSubmissionProgress() {
+        const progress = document.getElementById('cf25-submission-progress');
+        if (progress) {
+            progress.remove();
+        }
+    }
+
+    // Check for previous completion on page load
+    window.addEventListener('load', function() {
+        const completion = localStorage.getItem('cf25_survey_completed');
+        if (completion) {
+            try {
+                const data = JSON.parse(completion);
+                // If completed less than 1 hour ago, show completion state
+                if (Date.now() - data.timestamp < 3600000) {
+                    submissionCompleted = true;
+                    showMessage('surveyMessage', '✅ You have already completed this survey. Thank you!', 'success');
+                } else {
+                    // Clear old completion data
+                    localStorage.removeItem('cf25_survey_completed');
+                }
+            } catch (e) {
+                localStorage.removeItem('cf25_survey_completed');
+            }
+        }
+    });
+
+    // Prevent accidental page reload during submission
+    window.addEventListener('beforeunload', function(e) {
+        if (isCurrentlySubmitting) {
+            e.preventDefault();
+            e.returnValue = 'Your survey is still being submitted. Are you sure you want to leave?';
+            return e.returnValue;
+        }
+    });
+
+    // Additional safeguard: Intercept any additional clicks on submit area
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('#submitSection') && (isCurrentlySubmitting || submissionCompleted)) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isCurrentlySubmitting) {
+                showMessage('surveyMessage', '⏳ Submission in progress, please wait...', 'error');
+            } else if (submissionCompleted) {
+                showMessage('surveyMessage', '✅ Survey already completed successfully!', 'success');
+            }
+
+            return false;
+        }
+    }, true);
 
     // Navigation functions
     function showResults() {
@@ -758,20 +1087,6 @@
         document.getElementById('adminSection').style.display = 'none';
         document.getElementById('adminLoginForm').style.display = 'none';
         document.getElementById('thankYouSection').style.display = 'block';
-    }
-
-    function showSurvey() {
-        document.getElementById('surveySection').style.display = 'block';
-        document.getElementById('resultsSection').style.display = 'none';
-        document.getElementById('adminSection').style.display = 'none';
-        document.getElementById('adminLoginForm').style.display = 'none';
-        document.getElementById('thankYouSection').style.display = 'none';
-
-        // Reset form
-        document.getElementById('attendeeCategory').value = '';
-        document.getElementById('questionsContainer').classList.add('hidden');
-        document.getElementById('submitSection').classList.add('hidden');
-        document.getElementById('surveyMessage').innerHTML = '';
     }
 
     function showAdminPanel() {
